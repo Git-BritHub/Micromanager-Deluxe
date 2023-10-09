@@ -3,18 +3,18 @@ const sequelize = require("./config/connection");
 
 sequelize.connect(function (err) {
     if (err) throw err;
-    console.log("MySQL is connected!")
-    init()
-})
+    console.log("MySQL is connected!");
+    init();
+});
 
 const questions = [
     {
         type: "list",
         name: "action",
         message: "What would you like to do?",
-        choices: ["View All Departments", "View All Roles", "View All Employees", "Add a Department", "Add a Role", "Add an Employee", "Update an Employee's Role"]
-    }
-]
+        choices: ["View All Departments", "View All Roles", "View All Employees", "Add a Department", "Add a Role", "Add an Employee", "Update an Employee's Role"],
+    },
+];
 
 const init = () => {
     inquirer.prompt(questions).then((data) => {
@@ -88,7 +88,7 @@ const addRole = () => {
         message: "What role would you like to add?"
     }]).then((res) => {
         sequelize.query(`INSERT INTO employee_role SET ?`, {
-            employee_role_name: res.employee_roleName
+            employees_role_name: res.employees_roleName
         })
         console.log("Role was successfully added!")
         init()
@@ -96,18 +96,51 @@ const addRole = () => {
 }
 
 const addEmployee = () => {
-    inquirer.prompt([{
-        type: "input",
-        name: "employeeName",
-        message: "What employee would you like to add?"
-    }]).then((res) => {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "firstName",
+            message: "What is the first name of the employee you would like to add?",
+        },
+        {
+            type: "input",
+            name: "lastName",
+            message: "What is the employee's last name?",
+        },
+        {
+            type: "list",
+            name: "roleId",
+            message: "Select the role of the employee:",
+            choices: viewAllRoles.map((role) => ({
+                name: role.title,
+                value: role.id,
+            })),
+        },
+        {
+            type: "list",
+            name: "managerId",
+            message: "Select the manager of the employee:",
+            choices: employees.map((employee) => ({
+                name: `${employee.first_name} ${employee.last_name}`,
+                value: employee.id,
+            })),
+        },
+    ]).then((employeeData) => {
         sequelize.query(`INSERT INTO employees SET ?`, {
-            employees_name: res.employeesName
-        })
-        console.log("Employee was successfully added!")
-        init()
-    })
-}
+            first_name: employeeData.firstName,
+            last_name: employeeData.lastName,
+            role_id: employeeData.roleId,
+            manager_id: employeeData.managerId,
+        }, (err, res) => {
+            if (err) {
+                console.error("Error in adding new employee", err);
+            } else {
+                console.log("Employee was successfully added!");
+            }
+            init();
+        });
+    });
+};
 
 const updateEmployeeRole = () => {
     inquirer.prompt([{
@@ -129,6 +162,6 @@ const updateEmployeeRole = () => {
             })
             console.log("Role was successfully added!")
             init()
-        })
-    })
-}
+        });
+    });
+};
