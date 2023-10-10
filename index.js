@@ -20,80 +20,80 @@ const init = () => {
     inquirer.prompt(questions).then((data) => {
         const choice = data.action;
         if (choice === "View All Departments") {
-            viewAllDepartments()
+            viewAllDepartments();
         }
         if (choice === "View All Roles") {
-            viewAllRoles()
+            viewAllRoles();
         }
         if (choice === "View All Employees") {
-            viewAllEmployees()
+            viewAllEmployees();
         }
         if (choice === "Add a Department") {
-            addDepartment()
+            addDepartment();
         }
         if (choice === "Add a Role") {
-            addRole()
+            addRole();
         }
         if (choice === "Add an Employee") {
-            addEmployee()
+            addEmployee();
         }
         if (choice === "Update an Employee's Role") {
-            updateEmployeeRole()
+            updateEmployeeRole();
         }
-    })
-}
+    });
+};
 
 const viewAllDepartments = () => {
     sequelize.query(`SELECT * FROM department`, function (err, res) {
         if (err) throw err;
-        console.table(res)
-        init()
-    })
-}
+        console.table(res);
+        init();
+    });
+};
 
 const viewAllRoles = () => {
     sequelize.query(`SELECT * FROM employee_role`, function (err, res) {
         if (err) throw err;
-        console.table(res)
-        init()
-    })
-}
+        console.table(res);
+        init();
+    });
+};
 
 const viewAllEmployees = () => {
     sequelize.query(`SELECT * FROM employees`, function (err, res) {
         if (err) throw err;
-        console.table(res)
-        init()
-    })
-}
+        console.table(res);
+        init();
+    });
+};
 
 const addDepartment = () => {
     inquirer.prompt([{
         type: "input",
         name: "departmentName",
-        message: "What department would you like to add?"
+        message: "What department would you like to add?",
     }]).then((res) => {
         sequelize.query(`INSERT INTO department SET ?`, {
-            department_name: res.departmentName
-        })
-        console.log("Department was successfully added!")
-        init()
-    })
-}
+            department_name: res.departmentName,
+        }),
+            console.log("Department was successfully added!");
+        init();
+    });
+};
 
 const addRole = () => {
     inquirer.prompt([{
         type: "input",
         name: "roleName",
-        message: "What role would you like to add?"
+        message: "What role would you like to add?",
     }]).then((res) => {
         sequelize.query(`INSERT INTO employee_role SET ?`, {
-            employees_role_name: res.employees_roleName
-        })
-        console.log("Role was successfully added!")
-        init()
-    })
-}
+            employees_role_name: res.roleName,
+        }),
+            console.log("Role was successfully added!");
+        init();
+    });
+};
 
 const addEmployee = () => {
     inquirer.prompt([
@@ -133,7 +133,7 @@ const addEmployee = () => {
             manager_id: employeeData.managerId,
         }, (err, res) => {
             if (err) {
-                console.error("Error in adding new employee", err);
+                console.error("Error in adding new employee!", err);
             } else {
                 console.log("Employee was successfully added!");
             }
@@ -143,25 +143,41 @@ const addEmployee = () => {
 };
 
 const updateEmployeeRole = () => {
-    inquirer.prompt([{
-        type: "list",
-        name: "employeeName",
-        message: "Which employee would you like to update?",
-    }]).then((res) => {
-        sequelize.query(`SELECT * FROM employees`, function (err, res) {
-            if (err) throw err;
-            console.table(res)
-            init()
-        });inquirer.prompt([{
-            type: "list",
-            name: "selectRole",
-            message: "What is the employee's new role?",
-        }]).then((res) => {
-            sequelize.query(`INSERT INTO employee_role SET ?`, {
-                employee_role_name: res.employee_roleName
-            })
-            console.log("Role was successfully added!")
-            init()
+    sequelize.query(`SELECT * FROM employees`, (err, employees) => {
+        if (err) throw err;
+        console.table(employees);
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "employeeName",
+                message: "Which employee would you like to update?",
+                choices: employees.map((employee) => ({
+                    name: `${employee.first_name} ${employee.last_name}`,
+                    value: employee.id,
+                })),
+            },
+            {
+                type: "list",
+                name: "selectRoleId",
+                message: "What is the employee's new role?",
+                choices: roles.map((role) => ({
+                    name: role.employee_role_name,
+                    value: role.id,
+                })),
+            },
+        ]).then((answers) => {
+            const { selectedEmployeeId, selectRoleId } = answers;
+            sequelize.query(`UPDATE employees SET role_id = ? WHERE id = ?`,
+                [selectRoleId, selectedEmployeeId],
+                (err, res) => {
+                    if (err) {
+                        console.error("Error updating employee role!", err);
+                    } else {
+                        console.log("Role was successfully updated!")
+                    }
+                    init();
+                }
+            );
         });
     });
 };
