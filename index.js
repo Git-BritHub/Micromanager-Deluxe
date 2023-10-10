@@ -81,12 +81,29 @@ const addDepartment = () => {
     });
 };
 
+// TODO: get addRole functioning correctly and research implimenting .promise() function
 const addRole = () => {
-    inquirer.prompt([{
-        type: "input",
-        name: "roleName",
-        message: "What role would you like to add?",
-    }]).then((res) => {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "roleName",
+            message: "What role would you like to add?",
+        },
+        {
+            type: "input",
+            name: "roleSalary",
+            message: "What salary does this new role have?",
+        },
+        {
+            type: "list",
+            name: "departmentName",
+            message: "Which department does this role belong to?",
+            choices: viewAllDepartments.map((department) => ({
+                name: department.title,
+                value: department.id,
+            })),
+        },
+    ]).then((res) => {
         sequelize.query(`INSERT INTO employee_role SET ?`, {
             employees_role_name: res.roleName,
         }),
@@ -95,6 +112,7 @@ const addRole = () => {
     });
 };
 
+// TODO: get addEmployee functioning correctly and research implimenting .promise() function
 const addEmployee = () => {
     inquirer.prompt([
         {
@@ -142,6 +160,7 @@ const addEmployee = () => {
     });
 };
 
+// TODO: get updateEmployeeRole functioning correctly and research implimenting .promise() function
 const updateEmployeeRole = () => {
     sequelize.query(`SELECT * FROM employees`, (err, employees) => {
         if (err) throw err;
