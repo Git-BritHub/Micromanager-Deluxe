@@ -112,7 +112,7 @@ const addRole = () => {
 
 // TODO: get addEmployee functioning correctly and research implimenting .promise() function
 const addEmployee = () => {
-    sequelize.query("SELECT title FROM employee_role;", )
+    sequelize.query("SELECT title FROM employee_role;",)
     inquirer.prompt([
         {
             type: "input",
@@ -166,28 +166,37 @@ const updateEmployeeRole = () => {
                     value: employee.id,
                 })),
             },
-            {
-                type: "list",
-                name: "selectRoleId",
-                message: "What is the employee's new role?",
-                choices: roles.map((role) => ({
+        ]).then((employeeData) => {
+            sequelize.query(`SELECT * FROM employee_role`, (err, roles) => {
+                if (err) throw err;
+                const roleMap = roles.map((role) => ({
                     name: role.employee_role_name,
                     value: role.id,
-                })),
-            },
-        ]).then((answers) => {
-            const { selectedEmployeeId, selectRoleId } = answers;
-            sequelize.query(`UPDATE employees SET role_id = ? WHERE id = ?`,
-                [selectRoleId, selectedEmployeeId],
-                (err, res) => {
-                    if (err) {
-                        console.error("Error updating employee role!", err);
-                    } else {
-                        console.log("Role was successfully updated!")
-                    }
-                    init();
-                }
-            );
+                }))
+                inquirer.prompt([
+                    {
+                        type: "list",
+                        name: "selectRoleId",
+                        message: "What is the employee's new role?",
+                        choices: roleMap,
+                    }]).then((roleData) => {
+                        const selectedEmployeeId = employeeData.employeeName;
+                        const selectedRoleId = roleData.selectRoleId;
+                        const params = [selectedRoleId, selectedEmployeeId]
+                        sequelize.query(`UPDATE employees SET role_id = ? WHERE id = ?`, params,
+                            (err, res) => {
+                                if (err) {
+                                    console.error("Error updating employee role!", err);
+                                } else {
+                                    console.log("Role was successfully updated!")
+                                }
+                                init();
+                            }
+                        );
+                    })
+            })
         });
     });
 };
+
+
