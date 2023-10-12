@@ -95,17 +95,15 @@ const addRole = () => {
             message: "What salary does this new role have?",
         },
         {
-            type: "list",
-            name: "departmentName",
-            message: "Which department does this role belong to?",
-            choices: viewAllDepartments.map((department) => ({
-                name: department.title,
-                value: department.id,
-            })),
+            type: "input",
+            name: "departmentId",
+            message: "Which department ID does this role belong to?",
         },
     ]).then((res) => {
         sequelize.query(`INSERT INTO employee_role SET ?`, {
-            employees_role_name: res.roleName,
+            title: res.roleName,
+            salary: res.roleSalary,
+            department_id: res.departmentId
         }),
             console.log("Role was successfully added!");
         init();
@@ -114,6 +112,7 @@ const addRole = () => {
 
 // TODO: get addEmployee functioning correctly and research implimenting .promise() function
 const addEmployee = () => {
+    sequelize.query("SELECT title FROM employee_role;", )
     inquirer.prompt([
         {
             type: "input",
