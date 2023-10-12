@@ -83,30 +83,39 @@ const addDepartment = () => {
 
 // TODO: get addRole functioning correctly and research implimenting .promise() function
 const addRole = () => {
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "roleName",
-            message: "What role would you like to add?",
-        },
-        {
-            type: "input",
-            name: "roleSalary",
-            message: "What salary does this new role have?",
-        },
-        {
-            type: "input",
-            name: "departmentId",
-            message: "Which department ID does this role belong to?",
-        },
-    ]).then((res) => {
-        sequelize.query(`INSERT INTO employee_role SET ?`, {
-            title: res.roleName,
-            salary: res.roleSalary,
-            department_id: res.departmentId
-        }),
-            console.log("Role was successfully added!");
-        init();
+
+    sequelize.query("SELECT * FROM department", (err, res) => {
+        const departmentMap = res.map((depData) => ({
+            name: depData.department_name,
+            value: depData.id,
+        }))
+
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "roleName",
+                message: "What role would you like to add?",
+            },
+            {
+                type: "input",
+                name: "roleSalary",
+                message: "What salary does this new role have?",
+            },
+            {
+                type: "list",
+                name: "departmentId",
+                message: "Which department ID does this role belong to?",
+                choices: departmentMap
+            },
+        ]).then((res) => {
+            sequelize.query(`INSERT INTO employee_role SET ?`, {
+                title: res.roleName,
+                salary: res.roleSalary,
+                department_id: res.departmentId
+            }),
+                console.log("Role was successfully added!");
+                init();
+        })
     });
 };
 
