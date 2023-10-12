@@ -125,22 +125,14 @@ const addEmployee = () => {
             message: "What is the employee's last name?",
         },
         {
-            type: "list",
+            type: "input",
             name: "roleId",
-            message: "Select the role of the employee:",
-            choices: viewAllRoles.map((role) => ({
-                name: role.title,
-                value: role.id,
-            })),
+            message: "What is the role ID of the employee?"
         },
         {
-            type: "list",
+            type: "input",
             name: "managerId",
-            message: "Select the manager of the employee:",
-            choices: employees.map((employee) => ({
-                name: `${employee.first_name} ${employee.last_name}`,
-                value: employee.id,
-            })),
+            message: "What is the manager ID of the employee?"
         },
     ]).then((employeeData) => {
         sequelize.query(`INSERT INTO employees SET ?`, {
