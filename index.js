@@ -114,49 +114,56 @@ const addRole = () => {
                 department_id: res.departmentId
             }),
                 console.log("Role was successfully added!");
-                init();
+            init();
         })
     });
 };
 
 // TODO: get addEmployee functioning correctly and research implimenting .promise() function
 const addEmployee = () => {
-    sequelize.query("SELECT title FROM employee_role;",)
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "firstName",
-            message: "What is the first name of the employee you would like to add?",
-        },
-        {
-            type: "input",
-            name: "lastName",
-            message: "What is the employee's last name?",
-        },
-        {
-            type: "input",
-            name: "roleId",
-            message: "What is the role ID of the employee?"
-        },
-        {
-            type: "input",
-            name: "managerId",
-            message: "What is the manager ID of the employee?"
-        },
-    ]).then((employeeData) => {
-        sequelize.query(`INSERT INTO employees SET ?`, {
-            first_name: employeeData.firstName,
-            last_name: employeeData.lastName,
-            role_id: employeeData.roleId,
-            manager_id: employeeData.managerId,
-        }, (err, res) => {
-            if (err) {
-                console.error("Error in adding new employee!", err);
-            } else {
-                console.log("Employee was successfully added!");
-            }
-            init();
-        });
+    sequelize.query("SELECT * FROM employee_role", (err, res) => {
+        const roleMap = res.map((roleData) => ({
+            name: roleData.title,
+            value: roleData.id,
+        }))
+
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "firstName",
+                message: "What is the first name of the employee you would like to add?",
+            },
+            {
+                type: "input",
+                name: "lastName",
+                message: "What is the employee's last name?",
+            },
+            {
+                type: "list",
+                name: "roleId",
+                message: "What is the role ID of the employee?",
+                choices: roleMap
+            },
+            {
+                type: "input",
+                name: "managerId",
+                message: "What is the manager ID of the employee?"
+            },
+        ]).then((employeeData) => {
+            sequelize.query(`INSERT INTO employees SET ?`, {
+                first_name: employeeData.firstName,
+                last_name: employeeData.lastName,
+                role_id: employeeData.roleId,
+                manager_id: employeeData.managerId,
+            }, (err, res) => {
+                if (err) {
+                    console.error("Error in adding new employee!", err);
+                } else {
+                    console.log("Employee was successfully added!");
+                }
+                init();
+            });
+        })
     });
 };
 
@@ -178,15 +185,15 @@ const updateEmployeeRole = () => {
         ]).then((employeeData) => {
             sequelize.query(`SELECT * FROM employee_role`, (err, roles) => {
                 if (err) throw err;
-                const roleMap = roles.map((role) => ({
-                    name: role.employee_role_name,
-                    value: role.id,
+                const roleMap = roles.map((roleData) => ({
+                    name: roleData.title,
+                    value: roleData.id,
                 }))
                 inquirer.prompt([
                     {
                         type: "list",
                         name: "selectRoleId",
-                        message: "What is the employee's new role?",
+                        message: "What is the employee's new role ID?",
                         choices: roleMap,
                     }]).then((roleData) => {
                         const selectedEmployeeId = employeeData.employeeName;
