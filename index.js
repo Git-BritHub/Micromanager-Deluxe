@@ -118,53 +118,75 @@ const addRole = () => {
         })
     });
 };
-
+let roleMap = [];
+let empMap = [];
 // TODO: get addEmployee functioning correctly and research implimenting .promise() function
 const addEmployee = () => {
     sequelize.query("SELECT * FROM employee_role", (err, res) => {
-        const roleMap = res.map((roleData) => ({
-            name: roleData.title,
-            value: roleData.id,
-        }))
-
-        inquirer.prompt([
-            {
-                type: "input",
-                name: "firstName",
-                message: "What is the first name of the employee you would like to add?",
-            },
-            {
-                type: "input",
-                name: "lastName",
-                message: "What is the employee's last name?",
-            },
-            {
-                type: "list",
-                name: "roleId",
-                message: "What is the role ID of the employee?",
-                choices: roleMap
-            },
-            {
-                type: "input",
-                name: "managerId",
-                message: "What is the manager ID of the employee?"
-            },
-        ]).then((employeeData) => {
-            sequelize.query(`INSERT INTO employees SET ?`, {
-                first_name: employeeData.firstName,
-                last_name: employeeData.lastName,
-                role_id: employeeData.roleId,
-                manager_id: employeeData.managerId,
-            }, (err, res) => {
-                if (err) {
-                    console.error("Error in adding new employee!", err);
-                } else {
-                    console.log("Employee was successfully added!");
-                }
-                init();
-            });
+        // let roleMap = res.map((roleData) => ({
+        res.forEach(n => {
+            roleMap.push(n.title)
         })
-    });
+        res.forEach(v => {
+            roleMap.push(v.id)
+        })
+        //     name: roleData.title,
+        //     value: roleData.id,
+        // }))
+    })
+    sequelize.query("SELECT * FROM employees", (err, res) => {
+        res.forEach(n => {
+            empMap.push(n.first_name + " " + n.last_name)
+        })
+        res.forEach(v => {
+            empMap.push(v.id)
+        })
+        // let empMap = res.map((employeeData) => ({
+        //     name: employeeData.last_name,
+        //     firstName: employeeData.first_name,
+        //     value: employeeData.id,
+        // }))
+    })
+
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "firstName",
+            message: "What is the first name of the employee you would like to add?",
+        },
+        {
+            type: "input",
+            name: "lastName",
+            message: "What is the employee's last name?",
+        },
+        {
+            type: "list",
+            name: "roleId",
+            message: "What is the role ID of the employee?",
+            choices: roleMap
+        },
+        {
+            type: "list",
+            name: "managerId",
+            message: "What is the manager ID of the employee?",
+            choices: empMap
+        },
+    ]).then((employeeData) => {
+        sequelize.query(`INSERT INTO employees SET ?`, {
+            first_name: employeeData.firstName,
+            last_name: employeeData.lastName,
+            role_id: employeeData.roleId,
+            manager_id: employeeData.managerId,
+        }, (err, res) => {
+            if (err) {
+                console.error("Error in adding new employee!", err);
+            } else {
+                console.log("Employee was successfully added!");
+            }
+            init();
+        });
+    })
+    // });
 };
 
 // TODO: get updateEmployeeRole functioning correctly and research implimenting .promise() function
