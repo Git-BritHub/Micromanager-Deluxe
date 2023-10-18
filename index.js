@@ -81,9 +81,8 @@ const addDepartment = () => {
     });
 };
 
-// TODO: get addRole functioning correctly and research implimenting .promise() function
+// TODO: impliment .promise() function
 const addRole = () => {
-
     sequelize.query("SELECT * FROM department", (err, res) => {
         const departmentMap = res.map((depData) => ({
             name: depData.department_name,
@@ -118,38 +117,25 @@ const addRole = () => {
         })
     });
 };
+
 let roleMap = [];
 let roleOpt = [];
 let empMap = [];
 let empOpt = [];
+
 // TODO: get addEmployee functioning correctly and research implimenting .promise() function
 const addEmployee = () => {
     sequelize.query("SELECT * FROM employee_role", (err, res) => {
-        // let roleMap = res.map((roleData) => ({
         res.forEach(n => {
             roleMap.push(n.title)
             roleOpt.push([n.title, n.id])
         })
-        // res.forEach(v => {
-        //     roleMap.push(v.id)
-        // })
-        //     name: roleData.title,
-        //     value: roleData.id,
-        // }))
     })
     sequelize.query("SELECT * FROM employees", (err, res) => {
         res.forEach(n => {
             empMap.push(n.first_name + " " + n.last_name)
             empOpt.push([n.first_name + " " + n.last_name, n.id])
         })
-        // res.forEach(v => {
-        //     empMap.push(v.id)
-        // })
-        // let empMap = res.map((employeeData) => ({
-        //     name: employeeData.last_name,
-        //     firstName: employeeData.first_name,
-        //     value: employeeData.id,
-        // }))
     })
 
     inquirer.prompt([
@@ -210,7 +196,7 @@ const addEmployee = () => {
     // });
 };
 
-// TODO: get updateEmployeeRole functioning correctly and research implimenting .promise() function
+// TODO: research implimenting .promise() function
 const updateEmployeeRole = () => {
     sequelize.query(`SELECT * FROM employees`, (err, employees) => {
         if (err) throw err;
