@@ -119,17 +119,20 @@ const addRole = () => {
     });
 };
 let roleMap = [];
+let roleOpt = [];
 let empMap = [];
+let empOpt = [];
 // TODO: get addEmployee functioning correctly and research implimenting .promise() function
 const addEmployee = () => {
     sequelize.query("SELECT * FROM employee_role", (err, res) => {
         // let roleMap = res.map((roleData) => ({
         res.forEach(n => {
             roleMap.push(n.title)
+            roleOpt.push([n.title, n.id])
         })
-        res.forEach(v => {
-            roleMap.push(v.id)
-        })
+        // res.forEach(v => {
+        //     roleMap.push(v.id)
+        // })
         //     name: roleData.title,
         //     value: roleData.id,
         // }))
@@ -137,10 +140,11 @@ const addEmployee = () => {
     sequelize.query("SELECT * FROM employees", (err, res) => {
         res.forEach(n => {
             empMap.push(n.first_name + " " + n.last_name)
+            empOpt.push([n.first_name + " " + n.last_name, n.id])
         })
-        res.forEach(v => {
-            empMap.push(v.id)
-        })
+        // res.forEach(v => {
+        //     empMap.push(v.id)
+        // })
         // let empMap = res.map((employeeData) => ({
         //     name: employeeData.last_name,
         //     firstName: employeeData.first_name,
@@ -172,11 +176,28 @@ const addEmployee = () => {
             choices: empMap
         },
     ]).then((employeeData) => {
+        let title =  employeeData.roleId
+        let role_id
+        console.log(title)
+        roleOpt.forEach(role => {
+            console.log(role)
+            if (title === role[0]) {
+                role_id = role[1]
+            }
+        })
+        let fullName = employeeData.managerId
+        let manager_id
+        empOpt.forEach(manager => {
+            console.log(manager)
+            if (fullName === manager[0]) {
+                manager_id = manager[1]
+            }
+        })
         sequelize.query(`INSERT INTO employees SET ?`, {
             first_name: employeeData.firstName,
             last_name: employeeData.lastName,
-            role_id: employeeData.roleId,
-            manager_id: employeeData.managerId,
+            role_id,
+            manager_id, 
         }, (err, res) => {
             if (err) {
                 console.error("Error in adding new employee!", err);
@@ -207,7 +228,7 @@ const updateEmployeeRole = () => {
         ]).then((employeeData) => {
             sequelize.query(`SELECT * FROM employee_role`, (err, roles) => {
                 if (err) throw err;
-                const roleMap = roles.map((roleData) => ({
+                 roleMap = roles.map((roleData) => ({
                     name: roleData.title,
                     value: roleData.id,
                 }))
