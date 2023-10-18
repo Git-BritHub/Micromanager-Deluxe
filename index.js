@@ -16,6 +16,7 @@ const questions = [
     },
 ];
 
+// Allow user to manage company database functions
 const init = () => {
     inquirer.prompt(questions).then((data) => {
         const choice = data.action;
@@ -43,6 +44,7 @@ const init = () => {
     });
 };
 
+// View all departments in database
 const viewAllDepartments = () => {
     sequelize.query(`SELECT * FROM department`, function (err, res) {
         if (err) throw err;
@@ -51,6 +53,7 @@ const viewAllDepartments = () => {
     });
 };
 
+// View all employee roles in database
 const viewAllRoles = () => {
     sequelize.query(`SELECT * FROM employee_role`, function (err, res) {
         if (err) throw err;
@@ -59,6 +62,7 @@ const viewAllRoles = () => {
     });
 };
 
+// View all employees in database
 const viewAllEmployees = () => {
     sequelize.query(`SELECT * FROM employees`, function (err, res) {
         if (err) throw err;
@@ -67,6 +71,7 @@ const viewAllEmployees = () => {
     });
 };
 
+// Add department to database
 const addDepartment = () => {
     inquirer.prompt([{
         type: "input",
@@ -81,14 +86,13 @@ const addDepartment = () => {
     });
 };
 
-// TODO: impliment .promise() function
+// Add employee role to database
 const addRole = () => {
     sequelize.query("SELECT * FROM department", (err, res) => {
         const departmentMap = res.map((depData) => ({
             name: depData.department_name,
             value: depData.id,
         }))
-
         inquirer.prompt([
             {
                 type: "input",
@@ -118,12 +122,13 @@ const addRole = () => {
     });
 };
 
+// Global variables needed for role and employee maps/options
 let roleMap = [];
 let roleOpt = [];
 let empMap = [];
 let empOpt = [];
 
-// TODO: get addEmployee functioning correctly and research implimenting .promise() function
+// Add employee to database
 const addEmployee = () => {
     sequelize.query("SELECT * FROM employee_role", (err, res) => {
         res.forEach(n => {
@@ -137,7 +142,6 @@ const addEmployee = () => {
             empOpt.push([n.first_name + " " + n.last_name, n.id])
         })
     })
-
     inquirer.prompt([
         {
             type: "input",
@@ -162,7 +166,7 @@ const addEmployee = () => {
             choices: empMap
         },
     ]).then((employeeData) => {
-        let title =  employeeData.roleId
+        let title = employeeData.roleId
         let role_id
         console.log(title)
         roleOpt.forEach(role => {
@@ -183,7 +187,7 @@ const addEmployee = () => {
             first_name: employeeData.firstName,
             last_name: employeeData.lastName,
             role_id,
-            manager_id, 
+            manager_id,
         }, (err, res) => {
             if (err) {
                 console.error("Error in adding new employee!", err);
@@ -193,10 +197,9 @@ const addEmployee = () => {
             init();
         });
     })
-    // });
 };
 
-// TODO: research implimenting .promise() function
+// Update employee's new role to database
 const updateEmployeeRole = () => {
     sequelize.query(`SELECT * FROM employees`, (err, employees) => {
         if (err) throw err;
@@ -214,7 +217,7 @@ const updateEmployeeRole = () => {
         ]).then((employeeData) => {
             sequelize.query(`SELECT * FROM employee_role`, (err, roles) => {
                 if (err) throw err;
-                 roleMap = roles.map((roleData) => ({
+                roleMap = roles.map((roleData) => ({
                     name: roleData.title,
                     value: roleData.id,
                 }))
