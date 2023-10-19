@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 require('dotenv').config();
 
 // use environment/.env variables to connect to database
-const sequelize = mysql.createConnection({
+const db = mysql.createConnection({
   host: 'localhost',
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -12,4 +12,4 @@ const sequelize = mysql.createConnection({
 }
 );
 
-module.exports = sequelize;
+module.exports = db;

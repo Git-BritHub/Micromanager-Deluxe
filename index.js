@@ -1,7 +1,7 @@
 const inquirer = require("inquirer");
-const sequelize = require("./config/connection");
+const db = require("./config/connection");
 
-sequelize.connect(function (err) {
+db.connect(function (err) {
     if (err) throw err;
     console.log("MySQL is connected!");
     init();
@@ -46,7 +46,7 @@ const init = () => {
 
 // View all departments in database
 const viewAllDepartments = () => {
-    sequelize.query(`SELECT * FROM department`, function (err, res) {
+    db.query(`SELECT * FROM department`, function (err, res) {
         if (err) throw err;
         console.table(res);
         init();
@@ -55,7 +55,7 @@ const viewAllDepartments = () => {
 
 // View all employee roles in database
 const viewAllRoles = () => {
-    sequelize.query(`SELECT * FROM employee_role left JOIN department ON employee_role.department_id = department.id`, function (err, res) {
+    db.query(`SELECT * FROM employee_role left JOIN department ON employee_role.department_id = department.id`, function (err, res) {
         if (err) throw err;
         console.table(res);
         init();
@@ -64,7 +64,7 @@ const viewAllRoles = () => {
 
 // View all employees in database
 const viewAllEmployees = () => {
-    sequelize.query(`SELECT * FROM employees left JOIN employee_role ON employees.role_id = employee_role.id left JOIN department ON employee_role.department_id = department.id`, function (err, res) {
+    db.query(`SELECT * FROM employees left JOIN employee_role ON employees.role_id = employee_role.id left JOIN department ON employee_role.department_id = department.id`, function (err, res) {
         if (err) throw err;
         console.table(res);
         init();
@@ -78,7 +78,7 @@ const addDepartment = () => {
         name: "departmentName",
         message: "What department would you like to add?",
     }]).then((res) => {
-        sequelize.query(`INSERT INTO department SET ?`, {
+        db.query(`INSERT INTO department SET ?`, {
             department_name: res.departmentName,
         }),
             console.log("Department was successfully added!");
@@ -88,7 +88,7 @@ const addDepartment = () => {
 
 // Add employee role to database
 const addRole = () => {
-    sequelize.query("SELECT * FROM department", (err, res) => {
+    db.query("SELECT * FROM department", (err, res) => {
         const departmentMap = res.map((depData) => ({
             name: depData.department_name,
             value: depData.id,
@@ -111,7 +111,7 @@ const addRole = () => {
                 choices: departmentMap
             },
         ]).then((res) => {
-            sequelize.query(`INSERT INTO employee_role SET ?`, {
+            db.query(`INSERT INTO employee_role SET ?`, {
                 title: res.roleName,
                 salary: res.roleSalary,
                 department_id: res.departmentId
@@ -130,13 +130,13 @@ let empOpt = [];
 
 // Add employee to database
 const addEmployee = () => {
-    sequelize.query("SELECT * FROM employee_role", (err, res) => {
+    db.query("SELECT * FROM employee_role", (err, res) => {
         res.forEach(n => {
             roleMap.push(n.title)
             roleOpt.push([n.title, n.id])
         })
     })
-    sequelize.query("SELECT * FROM employees", (err, res) => {
+    db.query("SELECT * FROM employees", (err, res) => {
         res.forEach(n => {
             empMap.push(n.first_name + " " + n.last_name)
             empOpt.push([n.first_name + " " + n.last_name, n.id])
@@ -183,7 +183,7 @@ const addEmployee = () => {
                 manager_id = manager[1]
             }
         })
-        sequelize.query(`INSERT INTO employees SET ?`, {
+        db.query(`INSERT INTO employees SET ?`, {
             first_name: employeeData.firstName,
             last_name: employeeData.lastName,
             role_id,
@@ -202,8 +202,8 @@ const addEmployee = () => {
 // Update employee's new role to database
 const updateEmployeeRole = async () => {
     try {
-        const [employees] = await sequelize.promise().query('SELECT id as value, concat( first_name, " ", last_name ) as name FROM employees')
-        const [roles] = await sequelize.promise().query('SELECT id as value, title as name FROM employee_role')
+        const [employees] = await db.promise().query('SELECT id as value, concat( first_name, " ", last_name ) as name FROM employees')
+        const [roles] = await db.promise().query('SELECT id as value, title as name FROM employee_role')
         const response = await inquirer.prompt([
             {
                 type: "list",
@@ -218,7 +218,7 @@ const updateEmployeeRole = async () => {
                 choices: roles,
             },
         ])
-        await sequelize.promise().query('UPDATE employees SET role_id = ? WHERE id = ?', [response.role_id, response.id])
+        await db.promise().query('UPDATE employees SET role_id = ? WHERE id = ?', [response.role_id, response.id])
         console.log('Employee successfully added!')
         init()
     } catch (err) {
