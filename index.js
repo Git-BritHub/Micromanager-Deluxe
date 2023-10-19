@@ -55,7 +55,7 @@ const viewAllDepartments = () => {
 
 // View all employee roles in database
 const viewAllRoles = () => {
-    sequelize.query(`SELECT * FROM employee_role`, function (err, res) {
+    sequelize.query(`SELECT * FROM employee_role left JOIN department ON employee_role.department_id = department.id`, function (err, res) {
         if (err) throw err;
         console.table(res);
         init();
@@ -64,7 +64,7 @@ const viewAllRoles = () => {
 
 // View all employees in database
 const viewAllEmployees = () => {
-    sequelize.query(`SELECT * FROM employees`, function (err, res) {
+    sequelize.query(`SELECT * FROM employees left JOIN employee_role ON employees.role_id = employee_role.id left JOIN department ON employee_role.department_id = department.id`, function (err, res) {
         if (err) throw err;
         console.table(res);
         init();
@@ -200,51 +200,28 @@ const addEmployee = () => {
 };
 
 // Update employee's new role to database
-const updateEmployeeRole = () => {
-    sequelize.query(`SELECT * FROM employees`, (err, employees) => {
-        if (err) throw err;
-        console.table(employees);
-        inquirer.prompt([
+const updateEmployeeRole = async () => {
+    try {
+        const [employees] = await sequelize.promise().query('SELECT id as value, concat( first_name, " ", last_name ) as name FROM employees')
+        const [roles] = await sequelize.promise().query('SELECT id as value, title as name FROM employee_role')
+        const response = await inquirer.prompt([
             {
                 type: "list",
-                name: "employeeName",
+                name: "id",
                 message: "Which employee would you like to update?",
-                choices: employees.map((employee) => ({
-                    name: `${employee.first_name} ${employee.last_name}`,
-                    value: employee.id,
-                })),
+                choices: employees,
             },
-        ]).then((employeeData) => {
-            sequelize.query(`SELECT * FROM employee_role`, (err, roles) => {
-                if (err) throw err;
-                roleMap = roles.map((roleData) => ({
-                    name: roleData.title,
-                    value: roleData.id,
-                }))
-                inquirer.prompt([
-                    {
-                        type: "list",
-                        name: "selectRoleId",
-                        message: "What is the employee's new role ID?",
-                        choices: roleMap,
-                    }]).then((roleData) => {
-                        const selectedEmployeeId = employeeData.employeeName;
-                        const selectedRoleId = roleData.selectRoleId;
-                        const params = [selectedRoleId, selectedEmployeeId]
-                        sequelize.query(`UPDATE employees SET role_id = ? WHERE id = ?`, params,
-                            (err, res) => {
-                                if (err) {
-                                    console.error("Error updating employee role!", err);
-                                } else {
-                                    console.log("Role was successfully updated!")
-                                }
-                                init();
-                            }
-                        );
-                    })
-            })
-        });
-    });
-};
-
-
+            {
+                type: "list",
+                name: "role_id",
+                message: "What is the employee's new role?",
+                choices: roles,
+            },
+        ])
+        await sequelize.promise().query('UPDATE employees SET role_id = ? WHERE id = ?', [response.role_id, response.id])
+        console.log('Employee successfully added!')
+        init()
+    } catch (err) {
+        console.log(err)
+    }
+}
