@@ -16,6 +16,7 @@ Micromanager Deluxe is a command-line application that utilizes Node.js, Inquire
 
 
 ## Installation
+This application requires MySQL, Inquirer and Node. <br/>
 1. Clone my respository by inputting the following in your terminal: `git clone https://github.com/Git-BritHub/Micromanager-Deluxe.git`
 2. When cloning is complete, input `cd Micromanager-Deluxe`.
 3. Next, install the needed package dependencies by running `npm i`.
@@ -28,8 +29,6 @@ Micromanager Deluxe is a command-line application that utilizes Node.js, Inquire
 
 
 ## Usage
-This application requires MySQL, Inquirer and Node.<br />
-
 1. Input `mysql -u root -p` in the terminal and sign in with your MySQL password.
 2. Once signed in to MySQL, input `source db/schema.sql;` in your terminal to create the database.
 3. After database has been created, input `quit`.
