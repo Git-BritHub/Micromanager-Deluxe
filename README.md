@@ -43,7 +43,7 @@ This application requires MySQL, Inquirer and Node.<br />
 [![License: MIT](https://img.shields.io/badge/License-MIT-aqua.svg)](https://opensource.org/licenses/MIT)
 
 ## Contributing
-* Guidance and feedback from Software Developers: Jacob Nordan and CJ Sanders.
+* Guidance and feedback from Software Developers: Jacob Nordan, CJ Sanders and Eric Sayer.
 
 ## Questions
 If you find any bugs or have any questions, feel free to reach out to me through GitHub at https://github.com/Git-BritHub 
