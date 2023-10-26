@@ -44,6 +44,7 @@ This application requires MySQL, Inquirer and Node. <br/>
 [![License: MIT](https://img.shields.io/badge/License-MIT-aqua.svg)](https://opensource.org/licenses/MIT)
 
 ## Contributing
+* https://www.w3schools.com/mysql/mysql_sql.asp
 * Guidance and feedback from Software Developers: Jacob Nordan, CJ Sanders and Eric Sayer.
 
 ## Questions
