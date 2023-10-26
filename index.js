@@ -199,7 +199,7 @@ const addEmployee = () => {
     })
 };
 
-// Update employee's new role to database
+// Update employee's new role to database using promise() method/cleanest method
 const updateEmployeeRole = async () => {
     try {
         const [employees] = await db.promise().query('SELECT id as value, concat( first_name, " ", last_name ) as name FROM employees')
