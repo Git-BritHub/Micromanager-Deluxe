@@ -5,7 +5,7 @@ A Content Management System for company employee databases
 * [Description](#description)
 * [Installation](#installation)
 * [Usage](#usage)
-* [Walkthrough](#walkthrough)
+* [Demo](#demo)
 * [License](#license)
 * [Contributing](#contributing)
 * [Questions](#questions)
@@ -36,7 +36,8 @@ This application requires MySQL, Inquirer and Node. <br/>
 5. Use the up and down arrow keys on your keyboard to browse the various employee database functions.
 6. Input `^C` (ctrl + C) to quit the application. 
 
-## Walkthrough
+## Demo
+[Demo Link](https://drive.google.com/file/d/1jg2UMoU_QeA0QigB1twP6nrMFvZJM3_3/view)
 
 ## License
 [![License: MIT](https://img.shields.io/badge/License-MIT-aqua.svg)](https://opensource.org/licenses/MIT)
