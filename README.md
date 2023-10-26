@@ -5,7 +5,7 @@ A Content Management System for company employee databases
 * [Description](#description)
 * [Installation](#installation)
 * [Usage](#usage)
-* [Demo](#demo)
+* [Walkthrough](#walkthrough)
 * [License](#license)
 * [Contributing](#contributing)
 * [Questions](#questions)
@@ -35,9 +35,10 @@ This application requires MySQL, Inquirer and Node. <br/>
 4. Input `node index.js` in your terminal to run the application.
 5. Use the up and down arrow keys on your keyboard to browse the various employee database functions.
 6. Input `^C` (ctrl + C) to quit the application. 
+<img width="1512" alt="MD_screenshot" src="https://github.com/Git-BritHub/Micromanager-Deluxe/assets/130286884/0e7c43ea-5c10-4058-a766-0356f68d29f2">
 
-## Demo
-[Demo Link](https://drive.google.com/file/d/1jg2UMoU_QeA0QigB1twP6nrMFvZJM3_3/view)
+## Walkthrough
+[Walkthrough Video](https://drive.google.com/file/d/1jg2UMoU_QeA0QigB1twP6nrMFvZJM3_3/view)
 
 ## License
 [![License: MIT](https://img.shields.io/badge/License-MIT-aqua.svg)](https://opensource.org/licenses/MIT)
